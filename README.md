@@ -1,5 +1,5 @@
 # Redis-intro
-Simple Redis - NodeJS app to cache github repo count 
+Simple Redis - NodeJS api to cache github repo count 
 
 Requirements : 
 
