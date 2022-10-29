@@ -21,7 +21,7 @@ const setResponse = (username, repos) => {
 //Make Request to github for Data
 const getRepos = async (req, res, next) => {
   try {
-    console.log('fetching data...');
+    console.log('fetching data from backend...');
     const { username } = req.params;
     const response = await fetch(`https://api.github.com/users/${username}`);
     const data = await response.json();
@@ -29,7 +29,7 @@ const getRepos = async (req, res, next) => {
     const repos = data.public_repos;
 
     // Set data to Redis
-    client.set(username, repos, 3600);
+    client.SET(username, repos);
 
     res.send(setResponse(username, repos));
   } catch (err) {
@@ -39,19 +39,18 @@ const getRepos = async (req, res, next) => {
 };
 
 //Cache Middleware
-const cache = (req, res, next) => {
+const cache = async (req, res, next) => {
   const { username } = req.params;
-  client.get(username, (err, data) => {
-    if (err) throw err;
-    if (data !== null) {
-      res.send(setResponse(username, data));
-    } else {
-      next();
-    }
-  });
+  const data = await client.get(username);
+  if (data !== null) {
+    console.log('fetching data from backend...');
+    res.send(setResponse(username, data));
+  } else {
+    next();
+  }
 };
 
-app.get('/repos/:username',cache, getRepos);
+app.get('/repos/:username', cache, getRepos);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
