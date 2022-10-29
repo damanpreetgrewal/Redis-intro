@@ -41,7 +41,7 @@ const getRepos = async (req, res, next) => {
 //Cache Middleware
 const cache = async (req, res, next) => {
   const { username } = req.params;
-  const data = await client.get(username);
+  const data = await client.GET(username);
   if (data !== null) {
     console.log('fetching data from backend...');
     res.send(setResponse(username, data));
