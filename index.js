@@ -51,7 +51,7 @@ const cache = (req, res, next) => {
   });
 };
 
-app.get('/repos/:username', getRepos);
+app.get('/repos/:username',cache, getRepos);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
